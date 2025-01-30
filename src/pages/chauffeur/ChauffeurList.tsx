@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Table,
   TableBody,
@@ -55,6 +56,7 @@ const mockChauffeurs: Chauffeur[] = [
 const ChauffeurList = () => {
   const [chauffeurs] = useState<Chauffeur[]>(mockChauffeurs);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleExport = () => {
     toast({
@@ -79,7 +81,7 @@ const ChauffeurList = () => {
             <Download className="mr-2 h-4 w-4" />
             Export
           </Button>
-          <Button>
+          <Button onClick={() => navigate("/admin/chauffeurs/add")}>
             <Plus className="mr-2 h-4 w-4" />
             Add Chauffeur
           </Button>
