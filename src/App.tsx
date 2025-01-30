@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import AdminLayout from "./components/AdminLayout";
 import NotFound from "./pages/NotFound";
+import ChauffeurList from "./pages/chauffeur/ChauffeurList";
 
 const queryClient = new QueryClient();
 
@@ -19,7 +20,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route path="dashboard" element={<div>Dashboard Content</div>} />
-            <Route path="chauffeurs" element={<div>Chauffeurs List</div>} />
+            <Route path="chauffeurs" element={<ChauffeurList />} />
             <Route path="vehicles" element={<div>Vehicles Management</div>} />
             <Route path="shifts" element={<div>Shifts Calendar</div>} />
             <Route path="reports" element={<div>Reports Generator</div>} />
