@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+root {
+  --primary-color: #ffd700; /* Default yellow */
+  --secondary-color: #ff4500; /* Default orange */
+  --tertiary-color: #008000; /* Default green */
+}
+
+/* Example usage */
+body {
+  background-color: var(--primary-color);
+}
+
+.button {
+  background-color: var(--secondary-color);
+}
+
+.header {
+  color: var(--tertiary-color);
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

@@ -54,7 +54,10 @@ const FeuillesDeRoute = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white p-6">
+    <div
+      className="min-h-screen text-white p-6"
+      style={{ backgroundColor: "var(--primary-color)" }}
+    >
       <h1 className="text-3xl font-bold text-yellow-400 text-center mb-6">
         Feuilles de route
       </h1>

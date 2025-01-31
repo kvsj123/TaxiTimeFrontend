@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import {
   Users,
@@ -9,8 +9,8 @@ import {
   Menu,
   Map,
   LayoutDashboard,
-  Clock, // Importing Clock icon for departure time
-  Tag, // Importing Tag icon for vehicle plate
+  Clock,
+  Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -90,9 +90,31 @@ const chauffeursEnRoute = [
 
 const AdminLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [secondaryColor, setSecondaryColor] = useState("#FF4500"); // Default secondary color
+  const [tertiaryColor, setTertiaryColor] = useState("#008000"); // Default tertiary color
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
+
+  useEffect(() => {
+    // Load secondary color from localStorage
+    const storedSecondaryColor =
+      localStorage.getItem("secondaryColor") || secondaryColor;
+    setSecondaryColor(storedSecondaryColor);
+    document.documentElement.style.setProperty(
+      "--secondary-color",
+      storedSecondaryColor
+    );
+
+    // Load tertiary color from localStorage
+    const storedTertiaryColor =
+      localStorage.getItem("tertiaryColor") || tertiaryColor;
+    setTertiaryColor(storedTertiaryColor);
+    document.documentElement.style.setProperty(
+      "--tertiary-color",
+      storedTertiaryColor
+    );
+  }, []);
 
   const handleLogout = () => {
     navigate("/login");
@@ -103,9 +125,12 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: "var(--primary-color)" }}
+    >
       {/* Mobile Header */}
-      <div className="lg:hidden bg-gray-800 border-b p-4">
+      <div className="lg:hidden" style={{ backgroundColor: secondaryColor }}>
         <Button
           variant="ghost"
           size="icon"
@@ -117,14 +142,15 @@ const AdminLayout = () => {
 
       {/* Sidebar */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-gray-800 border-r transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 w-64`}
+        style={{ backgroundColor: secondaryColor }}
       >
         <div className="h-full flex flex-col">
           <div className="p-4 border-b flex items-center">
             <img src="/taxitimelogo.png" alt="Taxi Time" className="h-8 mr-2" />
-            <h1 className="text-xl font-bold text-yellow-400">Taxi Time</h1>
+            <h1 className="text-xl font-bold" style={{ color: tertiaryColor }}>
+              Taxi Time
+            </h1>
           </div>
 
           <nav className="flex-1 p-4 space-y-2">
@@ -133,15 +159,18 @@ const AdminLayout = () => {
               className="w-full justify-start text-white hover:bg-yellow-600"
               onClick={() => navigate("/admin")}
             >
-              <LayoutDashboard className="mr-2 h-4 w-4 text-yellow-400" />
-              Dashboard{" "}
+              <LayoutDashboard
+                className="mr-2 h-4 w-4"
+                style={{ color: tertiaryColor }}
+              />
+              Dashboard
             </Button>
             <Button
               variant="ghost"
               className="w-full justify-start text-white hover:bg-yellow-600"
               onClick={() => navigate("/admin/feuilles-de-route")}
             >
-              <Map className="mr-2 h-4 w-4 text-yellow-400" />
+              <Map className="mr-2 h-4 w-4" style={{ color: tertiaryColor }} />
               Feuilles de route
             </Button>
             <Button
@@ -149,7 +178,10 @@ const AdminLayout = () => {
               className="w-full justify-start text-white hover:bg-yellow-600"
               onClick={() => navigate("/admin/chauffeurs")}
             >
-              <Users className="mr-2 h-4 w-4 text-yellow-400" />
+              <Users
+                className="mr-2 h-4 w-4"
+                style={{ color: tertiaryColor }}
+              />
               Chauffeurs
             </Button>
             <Button
@@ -157,15 +189,18 @@ const AdminLayout = () => {
               className="w-full justify-start text-white hover:bg-yellow-600"
               onClick={() => navigate("/admin/vehicules")}
             >
-              <Car className="mr-2 h-4 w-4 text-yellow-400" />
+              <Car className="mr-2 h-4 w-4" style={{ color: tertiaryColor }} />
               Véhicules
             </Button>
             <Button
               variant="ghost"
               className="w-full justify-start text-white hover:bg-yellow-600"
-              onClick={() => navigate("/admin/shifts")}
+              onClick={() => navigate("/admin/planning")}
             >
-              <Calendar className="mr-2 h-4 w-4 text-yellow-400" />
+              <Calendar
+                className="mr-2 h-4 w-4"
+                style={{ color: tertiaryColor }}
+              />
               Planning
             </Button>
             <Button
@@ -173,7 +208,10 @@ const AdminLayout = () => {
               className="w-full justify-start text-white hover:bg-yellow-600"
               onClick={() => navigate("/admin/settings")}
             >
-              <Settings className="mr-2 h-4 w-4 text-yellow-400" />
+              <Settings
+                className="mr-2 h-4 w-4"
+                style={{ color: tertiaryColor }}
+              />
               Paramètres
             </Button>
           </nav>
@@ -200,9 +238,16 @@ const AdminLayout = () => {
         <div className="container mx-auto p-4">
           {location.pathname === "/admin" ? (
             <div className="flex flex-col items-center justify-center min-h-screen">
-              <h2 className="text-2xl font-bold text-yellow-400 mb-6">
-                <Clock className="inline mr-2" /> Chauffeurs en service
-                actuellement
+              <h2
+                className="text-2xl font-bold"
+                style={{ color: tertiaryColor }}
+                mb-6
+              >
+                <Clock
+                  className="inline mr-2"
+                  style={{ color: tertiaryColor }}
+                />{" "}
+                Chauffeurs en service actuellement
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {chauffeursEnRoute.map((chauffeur) => (
@@ -216,7 +261,10 @@ const AdminLayout = () => {
                       className="w-16 h-16 rounded-full border-2 border-yellow-400"
                     />
                     <div>
-                      <h3 className="text-lg font-semibold">
+                      <h3
+                        className="text-lg font-semibold"
+                        style={{ color: tertiaryColor }}
+                      >
                         {chauffeur.name}
                       </h3>
                       <p className="text-gray-400">
