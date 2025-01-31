@@ -51,14 +51,84 @@ const mockChauffeurs: Chauffeur[] = [
     joinDate: "2023-11-20",
     shiftsCompleted: 128,
   },
+  {
+    id: "4",
+    name: "Alice Brown",
+    email: "alice.brown@example.com",
+    phone: "+1 234 567 893",
+    status: "active",
+    joinDate: "2024-03-10",
+    shiftsCompleted: 50,
+  },
+  {
+    id: "5",
+    name: "Bob White",
+    email: "bob.white@example.com",
+    phone: "+1 234 567 894",
+    status: "active",
+    joinDate: "2024-04-05",
+    shiftsCompleted: 20,
+  },
+  {
+    id: "6",
+    name: "Charlie Green",
+    email: "charlie.green@example.com",
+    phone: "+1 234 567 895",
+    status: "archived",
+    joinDate: "2023-12-15",
+    shiftsCompleted: 75,
+  },
+  {
+    id: "7",
+    name: "Diana Prince",
+    email: "diana.prince@example.com",
+    phone: "+1 234 567 896",
+    status: "active",
+    joinDate: "2024-05-01",
+    shiftsCompleted: 90,
+  },
+  {
+    id: "8",
+    name: "Ethan Hunt",
+    email: "ethan.hunt@example.com",
+    phone: "+1 234 567 897",
+    status: "active",
+    joinDate: "2024-06-12",
+    shiftsCompleted: 60,
+  },
+  {
+    id: "9",
+    name: "Fiona Apple",
+    email: "fiona.apple@example.com",
+    phone: "+1 234 567 898",
+    status: "archived",
+    joinDate: "2023-10-10",
+    shiftsCompleted: 30,
+  },
+  {
+    id: "10",
+    name: "George Clooney",
+    email: "george.clooney@example.com",
+    phone: "+1 234 567 899",
+    status: "active",
+    joinDate: "2024-07-20",
+    shiftsCompleted: 110,
+  },
 ];
 
 const ChauffeurList = () => {
-  const [chauffeurs] = useState<Chauffeur[]>(mockChauffeurs);
+  const [chauffeurs, setChauffeurs] = useState<Chauffeur[]>(mockChauffeurs);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState<
+    "active" | "archived" | "all"
+  >("all");
+  const [filterShifts, setFilterShifts] = useState<number | null>(null);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleExport = () => {
+    // Implement PDF export functionality here
     toast({
       title: "Export Started",
       description: "Your data is being prepared for download.",
@@ -72,37 +142,101 @@ const ChauffeurList = () => {
     });
   };
 
+  // Filter chauffeurs based on search term and filters
+  const filteredChauffeurs = chauffeurs.filter((chauffeur) => {
+    const matchesSearch =
+      chauffeur.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      chauffeur.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      chauffeur.phone.includes(searchTerm);
+
+    const matchesStatus =
+      filterStatus === "all" || chauffeur.status === filterStatus;
+
+    const matchesShifts =
+      filterShifts === null || chauffeur.shiftsCompleted >= (filterShifts || 0);
+
+    return matchesSearch && matchesStatus && matchesShifts;
+  });
+
+  // Sort chauffeurs based on shifts completed
+  const sortedChauffeurs = filteredChauffeurs.sort((a, b) => {
+    if (sortOrder === "asc") {
+      return a.shiftsCompleted - b.shiftsCompleted;
+    } else {
+      return b.shiftsCompleted - a.shiftsCompleted;
+    }
+  });
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold tracking-tight">Chauffeur Management</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-yellow-600">
+          Gestion des Chauffeurs
+        </h1>
         <div className="space-x-2">
-          <Button onClick={handleExport}>
+          <Button
+            onClick={handleExport}
+            className="bg-yellow-600 hover:bg-yellow-500"
+          >
             <Download className="mr-2 h-4 w-4" />
-            Export
+            Exporter
           </Button>
-          <Button onClick={() => navigate("/admin/chauffeurs/add")}>
+          <Button
+            onClick={() => navigate("/admin/chauffeurs/add")}
+            className="bg-yellow-600 hover:bg-yellow-500"
+          >
             <Plus className="mr-2 h-4 w-4" />
-            Add Chauffeur
+            Ajouter un Chauffeur
           </Button>
         </div>
+      </div>
+
+      {/* Search and Filter Section */}
+      <div className="flex space-x-4">
+        <input
+          type="text"
+          placeholder="Rechercher par nom, email ou téléphone"
+          className="p-2 rounded border border-gray-300 text-black"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <select
+          className="p-2 rounded border border-gray-300 text-black"
+          value={filterStatus}
+          onChange={(e) =>
+            setFilterStatus(e.target.value as "active" | "archived" | "all")
+          }
+        >
+          <option value="all">Tous les statuts</option>
+          <option value="active">Actif</option>
+          <option value="archived">Archivé</option>
+        </select>
+
+        <select
+          className="p-2 rounded border border-gray-300 text-black"
+          value={sortOrder}
+          onChange={(e) => setSortOrder(e.target.value as "asc" | "desc")}
+        >
+          <option value="asc">Shifts: Moins à Plus</option>
+          <option value="desc">Shifts: Plus à Moins</option>
+        </select>
       </div>
 
       <div className="rounded-md border">
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
+              <TableHead>Nom</TableHead>
               <TableHead>Email</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Join Date</TableHead>
+              <TableHead>Téléphone</TableHead>
+              <TableHead>Statut</TableHead>
+              <TableHead>Date d'adhésion</TableHead>
               <TableHead>Shifts</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {chauffeurs.map((chauffeur) => (
+            {sortedChauffeurs.map((chauffeur) => (
               <TableRow key={chauffeur.id}>
                 <TableCell className="font-medium">{chauffeur.name}</TableCell>
                 <TableCell>{chauffeur.email}</TableCell>
